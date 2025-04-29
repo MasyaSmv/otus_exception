@@ -1,13 +1,9 @@
 <?php
 
 use App\Core\ExceptionStrategyRegistry;
-use App\Strategies\RepeatOnceThenLogStrategy;
+use App\Strategies\RepeatTwiceThenLogStrategy;
 
 require __DIR__ . '/../vendor/autoload.php';
 
 // Регистрируем дефолтную стратегию:
-ExceptionStrategyRegistry::instance()->register(
-    commandClass: '*',
-    exceptionClass: '*',
-    strategy: new RepeatOnceThenLogStrategy()
-);
+ExceptionStrategyRegistry::instance()->register('*', '*', new RepeatTwiceThenLogStrategy());
