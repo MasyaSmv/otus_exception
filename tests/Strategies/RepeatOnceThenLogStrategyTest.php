@@ -5,12 +5,13 @@ namespace Tests\Strategies;
 use App\Core\CommandInterface;
 use App\Core\CommandProcessor;
 use App\Core\CommandQueue;
-use App\Strategies\RepeatOnceThenLogStrategy;
 use App\Core\ExceptionStrategyRegistry;
-use PHPUnit\Framework\TestCase;
+use App\Strategies\RepeatOnceThenLogStrategy;
+use RuntimeException;
+use Tests\BaseTestCase;
 use Throwable;
 
-class RepeatOnceThenLogStrategyTest extends TestCase
+class RepeatOnceThenLogStrategyTest extends BaseTestCase
 {
     /**
      * @return void
@@ -26,10 +27,11 @@ class RepeatOnceThenLogStrategyTest extends TestCase
 
         $cmd = new class implements CommandInterface {
             public int $calls = 0;
+
             public function execute(): void
             {
                 $this->calls++;
-                throw new \RuntimeException('fail');
+                throw new RuntimeException('fail');
             }
         };
 
