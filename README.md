@@ -13,8 +13,8 @@
 git clone https://github.com/MasyaSmv/otus_exception.git
 cd otus_exception
 composer install          # PHP 8.3+
-composer test             # 7 тестов / 18 assertions – зелёные
-composer test-coverage    # HTML-отчёт в ./coverage (Lines ≈ 90 %)
+composer test             # 8 тестов (зелёные)
+composer test-coverage    # HTML-отчёт в ./coverage (Lines 100 %)
 ```
 
 ---
