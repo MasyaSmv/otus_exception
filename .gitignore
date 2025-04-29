@@ -1,0 +1,26 @@
+# Composer
+/vendor/
+composer.lock
+
+# PHPUnit coverage reports
+/coverage/
+
+# PHPUnit cache
+.phpunit.result.cache
+
+# Logs & temp files
+*.log
+*.cache
+*.tmp
+
+# OS / IDE / Editor files
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# GitHub workflows (artifacts, etc.)
+*.zip
+*.tar.gz
+*.tgz
+*.gz
