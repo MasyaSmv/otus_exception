@@ -2,10 +2,13 @@
 
 namespace Tests\Strategies;
 
+use App\Commands\FailedAfterTwoAttemptsCommand;
+use App\Commands\LogCommand;
 use App\Core\CommandInterface;
 use App\Core\CommandProcessor;
 use App\Core\CommandQueue;
 use App\Core\ExceptionStrategyRegistry;
+use App\Strategies\FailedAfterTwoAttemptsStrategy;
 use App\Strategies\RepeatTwiceThenLogStrategy;
 use PHPUnit\Framework\TestCase;
 use RuntimeException;
@@ -19,9 +22,15 @@ class RepeatTwiceThenLogStrategyTest extends TestCase
      */
     public function testRepeatTwiceThenLog(): void
     {
-        // регистрируем стратегию только для этого теста
-        ExceptionStrategyRegistry::instance()->register('*', '*', new RepeatTwiceThenLogStrategy());
-
+        /** Заново настраиваем реестр, чтобы быть независимыми от других тестов */
+        $reg = ExceptionStrategyRegistry::instance();
+        $reg->register('*', '*', new RepeatTwiceThenLogStrategy());
+        $reg->register(                       // ←--- стратегия для маркера
+            FailedAfterTwoAttemptsCommand::class,
+            '*',
+            new FailedAfterTwoAttemptsStrategy()
+        );
+        
         $queue = new CommandQueue();
 
         $cmd = new class implements CommandInterface {
@@ -29,30 +38,37 @@ class RepeatTwiceThenLogStrategyTest extends TestCase
             public function execute(): void
             {
                 $this->calls++;
-                throw new RuntimeException('boom');
+                throw new RuntimeException('fail');
             }
         };
 
         $queue->add($cmd);
         $processor = new CommandProcessor($queue);
 
-        // 1-я попытка  → добавится first RepeatTwiceCommand
+        // 1-я попытка → RepeatTwiceCommand
         $processor->runOnce();
         $this->assertFalse($queue->isEmpty());
 
-        // 2-я попытка  → добавится second RepeatTwiceCommand
+        // 2-я попытка → RepeatTwiceCommand (attempt 2)
         $processor->runOnce();
         $this->assertFalse($queue->isEmpty());
 
-        // 3-я попытка  → добавится LogCommand
+        // 3-я попытка → FailedAfterTwoAttemptsCommand
         $processor->runOnce();
         $this->assertFalse($queue->isEmpty());
 
-        // LogCommand выполняется
-        $processor->runOnce();
-        $this->assertTrue($queue->isEmpty());
+        $next = $queue->take();
+        $this->assertInstanceOf(FailedAfterTwoAttemptsCommand::class, $next);
+        $this->assertEquals(3, $cmd->calls);
 
-        // убеждаемся, что execute() вызвали ровно 3 раза
-        $this->assertSame(3, $cmd->calls);
+        // Важно: выполнить маркер-команду, чтобы вызвалась стратегия
+        $queue->add($next);
+        $processor->runOnce();
+
+        // Теперь очередь должна содержать LogCommand
+        $this->assertFalse($queue->isEmpty());
+        $this->assertInstanceOf(LogCommand::class, $queue->take());
+
     }
+
 }

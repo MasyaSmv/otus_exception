@@ -2,6 +2,7 @@
 
 namespace App\Strategies;
 
+use App\Commands\FailedAfterTwoAttemptsCommand;
 use App\Core\CommandInterface;
 use App\Core\CommandQueue;
 use App\Core\ExceptionStrategyInterface;
@@ -39,7 +40,7 @@ class RepeatTwiceThenLogStrategy implements ExceptionStrategyInterface
             return;
         }
 
-        // попыток не осталось → логируем
-        $queue->add(new LogCommand($e, $cmd));
+        // попыток не осталось → кладём маркер-команду
+        $queue->add(new FailedAfterTwoAttemptsCommand($cmd, $e));
     }
 }
