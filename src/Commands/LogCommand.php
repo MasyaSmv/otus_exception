@@ -5,12 +5,12 @@ namespace App\Commands;
 use App\Core\CommandInterface;
 use Throwable;
 
-class LogCommand implements CommandInterface
+readonly class LogCommand implements CommandInterface
 {
     public function __construct(
-        private readonly Throwable $exception,
-        private readonly CommandInterface $failedCommand,
-        private readonly string $logFile = __DIR__ . '/../../logs/exceptions.log'
+        private Throwable $exception,
+        private CommandInterface $failedCommand,
+        private string $logFile = __DIR__ . '/../../logs/exceptions.log'
     ) {
     }
 
