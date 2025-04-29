@@ -25,7 +25,7 @@
   },
   "scripts": {
     "test": "phpunit",
-    "test-coverage": "phpunit --coverage-html coverage"
+    "test-coverage": "phpunit --bootstrap tests/bootstrap.php --coverage-html coverage --color=always"
   },
   "config": {
     "optimize-autoloader": true,
