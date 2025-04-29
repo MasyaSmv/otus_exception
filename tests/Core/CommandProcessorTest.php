@@ -5,10 +5,10 @@ namespace Tests\Core;
 use App\Core\CommandInterface;
 use App\Core\CommandProcessor;
 use App\Core\CommandQueue;
-use PHPUnit\Framework\TestCase;
+use Tests\BaseTestCase;
 use Throwable;
 
-class CommandProcessorTest extends TestCase
+class CommandProcessorTest extends BaseTestCase
 {
     /**
      * @return void

@@ -2,18 +2,16 @@
 
 namespace Tests\Strategies;
 
+use App\Commands\FailedAfterTwoAttemptsCommand;
+use App\Commands\LogCommand;
 use App\Core\CommandInterface;
 use App\Core\CommandProcessor;
 use App\Core\CommandQueue;
-use App\Core\ExceptionStrategyRegistry;
-use App\Strategies\RepeatTwiceThenLogStrategy;
-use PHPUnit\Framework\TestCase;
-use App\Commands\FailedAfterTwoAttemptsCommand;
-use App\Commands\LogCommand;
 use RuntimeException;
+use Tests\BaseTestCase;
 use Throwable;
 
-class FailedAfterTwoAttemptsCommandTest extends TestCase
+class FailedAfterTwoAttemptsCommandTest extends BaseTestCase
 {
     /**
      * @return void
@@ -25,6 +23,7 @@ class FailedAfterTwoAttemptsCommandTest extends TestCase
 
         $cmd = new class implements CommandInterface {
             public int $calls = 0;
+
             public function execute(): void
             {
                 $this->calls++;

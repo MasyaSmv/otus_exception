@@ -15,5 +15,9 @@
         <include>
             <directory suffix=".php">src</directory>
         </include>
+        <exclude>
+            <file>src/Core/CommandInterface.php</file>
+            <file>src/Core/ExceptionStrategyInterface.php</file>
+        </exclude>
     </coverage>
 </phpunit>

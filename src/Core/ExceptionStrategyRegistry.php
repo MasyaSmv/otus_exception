@@ -39,6 +39,14 @@ class ExceptionStrategyRegistry
     }
 
     /**
+     * @return void
+     */
+    public function reset(): void 
+    { 
+        $this->map = []; 
+    }
+
+    /**
      * @param CommandInterface $cmd
      * @param Throwable $e
      *

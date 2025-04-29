@@ -10,11 +10,11 @@ use App\Core\CommandQueue;
 use App\Core\ExceptionStrategyRegistry;
 use App\Strategies\FailedAfterTwoAttemptsStrategy;
 use App\Strategies\RepeatTwiceThenLogStrategy;
-use PHPUnit\Framework\TestCase;
 use RuntimeException;
+use Tests\BaseTestCase;
 use Throwable;
 
-class RepeatTwiceThenLogStrategyTest extends TestCase
+class RepeatTwiceThenLogStrategyTest extends BaseTestCase
 {
     /**
      * @return void
@@ -28,13 +28,14 @@ class RepeatTwiceThenLogStrategyTest extends TestCase
         $reg->register(                       // ←--- стратегия для маркера
             FailedAfterTwoAttemptsCommand::class,
             '*',
-            new FailedAfterTwoAttemptsStrategy()
+            new FailedAfterTwoAttemptsStrategy(),
         );
-        
+
         $queue = new CommandQueue();
 
         $cmd = new class implements CommandInterface {
             public int $calls = 0;
+
             public function execute(): void
             {
                 $this->calls++;
@@ -68,7 +69,6 @@ class RepeatTwiceThenLogStrategyTest extends TestCase
         // Теперь очередь должна содержать LogCommand
         $this->assertFalse($queue->isEmpty());
         $this->assertInstanceOf(LogCommand::class, $queue->take());
-
     }
 
 }
